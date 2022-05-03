@@ -6,4 +6,10 @@
 ### Username: websiteadmin Password: adminpassword
 ### Username: bodinbuster Password: password
 
-## ENSURE TO UPDATE /admin/db_conn.php (and any other references) TO YOUR PHPMYADMIN DETAILS FOR IT TO WORK!!
+## ENSURE TO UPDATE 
+* /admin/db_conn.php
+* /admin/appointment-list.php
+* /admin/customer-list.php
+* /customer/view-appointment.php
+* /customer/make-appointment.php
+## TO YOUR PHPMYADMIN DETAILS FOR IT TO WORK!!
