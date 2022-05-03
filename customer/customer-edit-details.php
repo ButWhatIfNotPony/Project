@@ -1,20 +1,12 @@
 <?php
-
     // Initialize the session
     session_start();
 
     // Check if the user is logged in, otherwise redirect to login page
-    if (isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === true) {
-        header("location: ../customer/index.php");
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: ../login/login.php");
         exit;
     }
-
-    // Check if user logged in as admin
-    if ($_SESSION["id"] === "1") {
-        header("location: ../admin/index.php");
-        exit;
-    }
-    
 
     try {
     
@@ -22,8 +14,8 @@
         require_once "../admin/db_conn.php";
 
         // Define variables and initialize with empty values
-        $forename = $surname = $email = $phonenumber = $username = $password = $confirm_password = "";
-        $forename_err = $surname_err = $email_err = $phonenumber_err = $username_err = $password_err = $confirm_password_err = "";
+        $forename = $surname = $email = $phonenumber = $username = "";
+        $forename_err = $surname_err = $email_err = $phonenumber_err = $username_err = "";
 
         // Processing from data when form is submitted
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -94,29 +86,11 @@
                 }
             }
 
-            // Validate password
-            if (empty(trim($_POST["password"]))) {
-                $password_err = "Please enter a password.";
-            } elseif (strlen(trim($_POST["password"])) < 6) {
-                $password_err = "Password must have atleast 6 characters.";
-            } else {
-                $password = trim($_POST["password"]);
-            }
-
-            // Validate confirm password
-            if (empty(trim($_POST["confirm_password"]))) {
-                $confirm_password_err = "Please confirm password.";
-            } else {
-                $confirm_password = trim($_POST["confirm_password"]);
-                if (empty($password_err) && ($password != $confirm_password)) {
-                    $confirm_password_err = "Password did not match";
-                }
-            }
-
             // Check input errors before inserting into database
             if (empty($username_err) && empty($password_err) && empty($confirm_password_err) && empty($forename_err) && empty($surname_err) && empty($email_err) && empty($phonenumber_err)) {
                 // Prepare an insert statement
-                $sql = "INSERT INTO users (forename, surname, email, phonenumber, username, password) VALUES (:forename, :surname, :email, :phonenumber, :username, :password)";
+                $idd = $_SESSION["id"];
+                $sql = "UPDATE users SET forename=:forename, surname=:surname, email=:email, phonenumber=:phonenumber, username=:username WHERE id=$idd";
 
                 if ($stmt = $pdo->prepare($sql)) {
                     // Bind variables to the prepared statement as parameters
@@ -125,7 +99,6 @@
                     $stmt->bindParam(":email", $param_email, PDO::PARAM_STR);
                     $stmt->bindParam(":phonenumber", $param_phonenumber, PDO::PARAM_STR);
                     $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-                    $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
 
                     // Set parameters
                     $param_forename = $forename;
@@ -133,12 +106,11 @@
                     $param_email = $email;
                     $param_phonenumber = $phonenumber;
                     $param_username = $username;
-                    $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
 
                     // Attempt to execute the prepared statement
                     if ($stmt->execute()) {
                         // Redirect to login page
-                        header("location: login.php");
+                        header("location: ../login/logout.php");
                     } else {
                         echo "Oops! Something went wrong. Please try again.";
                     }
@@ -163,7 +135,7 @@
         <meta content="" name="description">
         <meta content="" name="keywords">
 
-        <title>Customer Sign Up | Movement Optimised</title>
+        <title>Customer Dashboard | Movement Optimised</title>
 
         <!-- Favicon -->
         <link href="../assets/img/favicon.png" rel="icon">
@@ -208,26 +180,25 @@
                         </li>
                         <li><a href="../blog.html">Blog</a></li>
                         <li><a href="../contact.html">Contact Us</a></li>
-                        <li><a href="login.php">Login</a></li>
-                        <li><a class="active" href="signup.php">Sign Up</a></li>
+                        <li><a href="../login/login.php">Login</a></li>
+                        <li><a href="../login/signup.php">Sign Up</a></li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>
                 </nav>
             </div>
         </header>
+
         <main id="main">
-            <!-- Login Form Section -->
-            <section class="signup">
+            <!-- Customer Details -->
+            <section class="about" data-aos="fade-up">
                 <div class="container">
 
                     <div class="section-title">
-                        <h2>New Customer Signup</h2>
-                        <p>Please fill in form below to create an account.</p>
+                        <h2>Update Your Details</h2>
+                        <p><a class="btn btn-danger" href="../login/logout.php">Logout</a></p>
                     </div>
                     <div class="row">
-                        <!-- Form Column -->
-                        <div class="col-md-12 col-lg-6 align-items-stretch">
-                            
+                        <div class="col-md-12 col-lg-3 align-items-stretch">
                             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
                                 <div class="form-group">
                                     <label>Forename</label>
@@ -259,24 +230,10 @@
                                     <span class="invalid-feedback"><?php echo $username_err; ?></span>
                                 </div>
                                 <br>
-                                <div class="form=group">
-                                    <label>Password</label>
-                                    <input type="password" name="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $password; ?>">
-                                    <span class="invalid-feedback"><?php echo $password_err; ?></span>
-                                </div>
-                                <br>
                                 <div class="form-group">
-                                    <label>Confirm Password</label>
-                                    <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $confirm_password; ?>">
-                                    <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                    <input type="submit" class="btn btn-primary" value="Submit">
+                                    <input type="submit" class="btn btn-primary" value="Update">
                                     <input type="reset" class="btn btn-secondary ml-2" value="Reset">
                                 </div>
-                                <br>
-                                <p>Returning Customer? <a href="login.php">Login now</a>.</p>
                             </form>
                         </div>
                         <!-- Credential Rules Column -->
@@ -368,19 +325,19 @@
             </div>
         </footer>
 
-        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi, bi-arrow-up-short"></i></a>
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
         <!-- Vendor JS Files -->
         <script src="../assets/vendor/purecounter/purecounter.js"></script>
         <script src="../assets/vendor/aos/aos.js"></script>
         <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-        <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+        <script src="../assets/vendor/isotope-layout/isotope-pkgd.min.js"></script>
         <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
         <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
         <script src="../assets/vendor/php-email-form/validate.js"></script>
 
-        <!-- Template Main JS File -->
+        <!-- Main JS File(s) -->
         <script src="../assets/js/main.js"></script>
     </body>
 </html>

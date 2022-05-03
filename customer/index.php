@@ -7,6 +7,12 @@
         header("location: ../login/login.php");
         exit;
     }
+
+    // Check if user logged in as admin
+    if ($_SESSION["id"] === "1") {
+        header("location: ../admin/index.php");
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -61,8 +67,8 @@
                         </li>
                         <li><a href="../blog.html">Blog</a></li>
                         <li><a href="../contact.html">Contact Us</a></li>
-                        <li><a href="login.php">Login</a></li>
-                        <li><a href="signup.php">Sign Up</a></li>
+                        <li><a href="../login/login.php">Login</a></li>
+                        <li><a href="../login/signup.php">Sign Up</a></li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>
                 </nav>
@@ -77,6 +83,18 @@
                     <div class="section-title">
                         <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
                         <p><a class="btn btn-danger" href="../login/logout.php">Logout</a></p>
+                        <p><a class="btn btn-danger" href="../login/reset-password.php">Reset Password</a></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-3 align-items-stretch">
+                            <a href="customer-edit-details.php" class="btn btn-info">Edit Info</a>
+                        </div>
+                        <div class="col-md-12 col-lg-3 align-items-stretch">
+                            <a href="view-appointment.php" class="btn btn-info">View Appointments</a>
+                        </div>
+                        <div class="col-md-12 col-lg-3 align-items-stretch">
+                            <a href="make-appointment.php" class="btn btn-info">Make Appointment</a>
+                        </div>
                     </div>
 
                 </div>

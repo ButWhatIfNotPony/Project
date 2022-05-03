@@ -8,67 +8,68 @@
         exit;
     }
 
-    // Include config file
-    require_once "../admin/db_conn.php";
+        // Include config file
+        require_once "../admin/db_conn.php";
 
-    // Define variables and initialize with empty values
-    $new_password = $confirm_new_password = "";
-    $new_password_err = $confirm_new_password_err = "";
+        // Define variables and initialize with empty values
+        $new_password = $confirm_new_password = "";
+        $new_password_err = $confirm_new_password_err = "";
 
-    // Processing from data when form is subbmitted
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        
-        // Validate new password
-        if (empty(trim($_POST["new_password"]))) {
-            $new_password_err = "Please enter a password.";
-        } elseif (strlen(trim($_POST["new_password"])) < 6) {
-            $new_password_err = "Password must have at least 6 characters.";
-        } else {
-            $new_password = trim($_POST["new_password"]);
-        }
-
-        // Validate confirm new password
-        if (empty(trim($_POST["confirm_new_password"]))) {
-            $confirm_new_password_err = "Please confirm the password.";
-        } else {
-            $confirm_new_password = trim($_POST["confirm_new_password"]);
-            if (empty($new_password_err) && ($new_password != $confirm_new_password)) {
-                $confirm_new_password_err = "Password did not match.";
+        // Processing from data when form is subbmitted
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            
+            // Validate new password
+            if (empty(trim($_POST["new_password"]))) {
+                $new_password_err = "Please enter a password.";
+            } elseif (strlen(trim($_POST["new_password"])) < 6) {
+                $new_password_err = "Password must have at least 6 characters.";
+            } else {
+                $new_password = trim($_POST["new_password"]);
             }
-        }
 
-        // Check input errors before updating the database
-        if (empty($new_password_err) && empty($confirm_new_password_err)) {
-            // Prepare an update statement
-            $sql = "UPDATE users SET password = :password WHERE id = :id";
-
-            if ($stmt = $pdo->prepare($sql)) {
-                // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
-                $stmt->bindParam(":id", $param_id, PDO::PARAM_INT);
-
-                // Set parameters
-                $param_password = password_hash($new_password, PASSWORD_DEFAULT);
-                $param_id = $_SESSION["id"];
-
-                // Attempt to execute the password statement
-                if ($stmt->execute()) {
-                    // Password updated successfully. Destroy the session, and redirect to login page
-                    session_destroy();
-                    header("location: login.php");
-                    exit();
-                } else {
-                    echo "Oops! Something went wrong. Please try again later.";
+            // Validate confirm new password
+            if (empty(trim($_POST["confirm_new_password"]))) {
+                $confirm_new_password_err = "Please confirm the password.";
+            } else {
+                $confirm_new_password = trim($_POST["confirm_new_password"]);
+                if (empty($new_password_err) && ($new_password != $confirm_new_password)) {
+                    $confirm_new_password_err = "Password did not match.";
                 }
-
-                // Close statement
-                unset($stmt);
             }
-        }
 
-        // Close connection
-        unset($pdo);
-    }
+            // Check input errors before updating the database
+            if (empty($new_password_err) && empty($confirm_new_password_err)) {
+                // Prepare an update statement
+                $sql = "UPDATE users SET password = :password WHERE id = :id";
+
+                if ($stmt = $pdo->prepare($sql)) {
+                    // Bind variables to the prepared statement as parameters
+                    $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
+                    $stmt->bindParam(":id", $param_id, PDO::PARAM_INT);
+
+                    // Set parameters
+                    $param_password = password_hash($new_password, PASSWORD_DEFAULT);
+                    $param_id = $_SESSION["id"];
+
+                    // Attempt to execute the password statement
+                    if ($stmt->execute()) {
+                        // Password updated successfully. Destroy the session, and redirect to login page
+                        session_destroy();
+                        header("location: login.php");
+                        exit();
+                    } else {
+                        echo "Oops! Something went wrong. Please try again later.";
+                    }
+
+                    // Close statement
+                    unset($stmt);
+                }
+            }
+
+            // Close connection
+            unset($pdo);
+        }
+    
 ?>
 
 <!DOCTYPE html>
@@ -152,7 +153,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Confirm Password</label>
-                                <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_new_password_err)) ? 'is-invalid' : ''; ?>">
+                                <input type="password" name="confirm_new_password" class="form-control <?php echo (!empty($confirm_new_password_err)) ? 'is-invalid' : ''; ?>">
                                 <span class="invalid-feedback"><?php echo $confirm_new_password_err; ?></span>
                             </div>
                             <div class="form-group">

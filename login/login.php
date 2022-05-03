@@ -2,17 +2,19 @@
     // Initialize the session
     session_start();
 
-    // Check if the user is already logged in, if yes then redirect him to welcome page
-    if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+    // Check if the user is logged in, otherwise redirect to login page
+    if (isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === true) {
         header("location: ../customer/index.php");
         exit;
     }
 
-    // Check if the user is already logged in, if yes then redirect him to welcome page
-    if (isset($_SESSION["adminloggedin"]) && $_SESSION["adminloggedin"] === true) {
+    // Check if user logged in as admin
+    if ($_SESSION["id"] === "1") {
         header("location: ../admin/index.php");
         exit;
     }
+
+    
 
     // Include config file
     require_once "../admin/db_conn.php";
@@ -62,22 +64,16 @@
                                 // Password is correct, so start a new session
                                 session_start();
 
-                                // Store data in session variables
-                                if ($username == "websiteadmin") {
-                                    $_SESSION["adminloggedin"] = true;
-                                    $_SESSION["id"] = $id;
-                                    $_SESSION["username"] = $username;
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["id"] = $id;
+                                $_SESSION["username"] = $username;
 
-                                    // Redirect user to welcome page
+                                if ($_SESSION["id"] === "1") {
                                     header("location: ../admin/index.php");
-                                } else {
-                                    $_SESSION["loggedin"] = true;
-                                    $_SESSION["id"] = $id;
-                                    $_SESSION["username"] = $username;
-
-                                    // Redirect user to welcome page
-                                    header("location: ../customer/index.php");
                                 }
+                                // Redirect user to welcome page
+                                header("location: ../customer/index.php");
+                                
                             } else {
                                 // Password is not valid, display a generic error messge
                                 $login_err = "Invalid usename or password.";

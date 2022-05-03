@@ -2,9 +2,9 @@
     // Initialize the session
     session_start();
 
-    // Check if the user is logged in, otherwise redirect to login page
-    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["id" !== "1"]) {
-        header("location: ../login/login.php");
+    // Check if user logged in as admin
+    if ($_SESSION["id"] !== "1") {
+        header("location: ../admin/index.php");
         exit;
     }
 ?>
@@ -77,15 +77,55 @@
                     <div class="section-title">
                         <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
                         <p><a class="btn btn-danger" href="../login/logout.php">Logout</a></p>
-                        <p><a class="btn btn-danger" href="../login/reset-password.php">Reset Password</a></p>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 col-lg-6 align-items-stretch">
-                            <a href="customer-list.php" class="btn btn-info">Customers</a>
-                        </div>
-                        <div class="col-md-12 col-lg-6 align-items-stretch">
-                            <a href="appointment-list.php" class="btn btn-info">Appointments</a>
-                        </div>
+                        <?php
+                            echo "<table class='table table-hover'>";
+                            echo "<thead><tr><th scope='col'>ID</th><th scope='col'>Forename</th><th scope='col'>Surname</th><th scope='col'>Email Address</th><th scope='col'>Phone Number</th></tr></thead>";
+                            echo "<tbody>";
+
+                            class TableRows extends RecursiveIteratorIterator {
+                                function __construct($it) {
+                                    parent::__construct($it, self::LEAVES_ONLY);
+                                }
+
+                                function current() {
+                                    return "<td scope='row'>" . parent::current() . "</td>";
+                                }
+
+                                function beginChildren() {
+                                    echo "<tr>";
+                                }
+
+                                function endChildren() {
+                                    echo "</tr>";
+                                }
+                            }
+
+                            $HOST = "localhost";
+                            $USER = "root";
+                            $PASS = "PoNiEs1080";
+                            $DBNAME = "Project";
+
+                            try {
+                                $conn = new PDO("mysql:host=$HOST;dbname=$DBNAME", $USER, $PASS);
+                                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                $stmt = $conn->prepare("SELECT id, forename, surname, email, phonenumber FROM users");
+                                $stmt->execute();
+
+                                // Set the resulting array to associative
+                                $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                                foreach (new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
+                                    echo $v;
+                                }
+                            } catch (PDOException $e) {
+                                echo "Error: " . $e->getMessage();
+                            }
+
+                            $conn = null;
+                            echo "</tbody>";
+                            echo "</table>";
+                        ?>
                     </div>
 
                 </div>

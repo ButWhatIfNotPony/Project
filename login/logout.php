@@ -6,7 +6,7 @@
     $_SESSION = array();
 
     // Destroy the session
-    session_destroy();
+    session_destroy("loggedin");
 
     // Redirect to the login page
     header("location: login.php");
