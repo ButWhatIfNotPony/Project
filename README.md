@@ -5,3 +5,5 @@
 ### Logins are:
 ### Username: websiteadmin Password: adminpassword
 ### Username: bodinbuster Password: password
+
+## ENSURE TO UPDATE /admin/db_conn.php (and any other references) TO YOUR PHPMYADMIN DETAILS FOR IT TO WORK!!
