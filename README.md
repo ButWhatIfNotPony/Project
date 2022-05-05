@@ -6,6 +6,8 @@
 ### Username: websiteadmin Password: adminpassword
 ### Username: bodinbuster Password: password
 
+## ENSURE TO CREATE A DATABASE CALLED 'Project' BEFORE IMPORTING THE SQL FILE!
+
 ## ENSURE TO UPDATE 
 * /admin/db_conn.php
 * /admin/appointment-list.php
