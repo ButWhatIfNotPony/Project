@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 03, 2022 at 03:53 PM
+-- Generation Time: May 05, 2022 at 06:45 PM
 -- Server version: 10.5.15-MariaDB-0+deb11u1
 -- PHP Version: 7.4.28
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `Project`
 --
+
+CREATE DATABASE Project;
 
 -- --------------------------------------------------------
 
