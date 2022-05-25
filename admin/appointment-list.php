@@ -103,8 +103,8 @@
                             }
 
                             $HOST = "localhost";
-                            $USER = "root";
-                            $PASS = "PoNiEs1080";
+                            $USER = "";
+                            $PASS = "";
                             $DBNAME = "Project";
 
                             try {
