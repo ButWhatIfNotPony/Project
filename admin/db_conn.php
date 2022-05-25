@@ -2,8 +2,8 @@
     // Database credentials. Assuming you are running MYSQL
     // server with default setting (user 'root' with no password)
     $DB_SERVER   = "localhost";
-    $DB_USERNAME = "root";
-    $DB_PASSWORD = "PoNiEs1080";
+    $DB_USERNAME = "";
+    $DB_PASSWORD = "";
     $DB_NAME     = "Project";
 
     // Attempt to connect to MySQL database
